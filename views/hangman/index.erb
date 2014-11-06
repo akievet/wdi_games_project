@@ -36,10 +36,26 @@
 <h3 class="live-score">Lives Left: <%= @game.lives %></h3>
 
 
+<script>
+//jQuery Document Ready
+$(function(){
+	//Document Variables
+	$id = $('h5').data('id');
+	$secretWordDisplay = $('h1#blanks');
+	$correctGuessesList = $('ul#correct-guesses');
+	$incorrectGuessesList = $('ul#incorrect-guesses');
+	$scoreDisplay = $('h3.live-score');
 
+	$('form.guess-letter').on('submit', function(e){
+		e.preventDefault();
+		var letterGuess= $('form.guess-letter input[type=text]').val();
+		evaluateLetterGuess(letterGuess);
+	});
 
-
-
-
-
-
+	$('form.guess-word').on('submit', function(e){
+		e.preventDefault();
+		var wordGuess= $('form.guess-word input[type=text]').val();
+		evaluateWordGuess(wordGuess);
+	});
+});
+</script>

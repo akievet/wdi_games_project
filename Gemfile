@@ -10,3 +10,4 @@ gem 'rake'
 gem 'pry'
 gem 'thin'
 
+gem 'pry-byebug'

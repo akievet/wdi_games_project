@@ -12,7 +12,7 @@ class HangmanGame < ActiveRecord::Base
   end
 
   def show_correct_letters
-    regex_letters= self.not_guessed_letters.join("|")
+    regex_letters = self.not_guessed_letters.join("|")
     regex= /(#{regex_letters})/
 
     self.word.split(' ').map do |word|
@@ -25,12 +25,12 @@ class HangmanGame < ActiveRecord::Base
   end
 
   def not_guessed_letters
-    all_letters= ("a".."z").to_a
-    all_letters-self.guessed_letters
+    all_letters = ("a".."z").to_a
+    all_letters - self.guessed_letters
   end
 
   def correct_letters
-    moves_array= self.hangman_moves.select do |move|
+    moves_array = self.hangman_moves.select do |move|
       move.is_correct?
     end
     moves_array.map do |move|
@@ -39,7 +39,7 @@ class HangmanGame < ActiveRecord::Base
   end
 
   def incorrect_letters
-    moves_array= self.hangman_moves.select do |move|
+    moves_array = self.hangman_moves.select do |move|
       move.is_correct? == false
     end
     moves_array.map do |move|
@@ -60,7 +60,7 @@ class HangmanGame < ActiveRecord::Base
   end
 
   def another_turn?
-    if attempt_count < 7
+    if lives > 0
       true
     else
       false

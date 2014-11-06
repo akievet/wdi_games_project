@@ -7,10 +7,10 @@ class HangmanController < ApplicationController
     if @game.correct?
       redirect "/hangman/#{@game.id}/win"
     elsif @game.another_turn?
-      @game= HangmanGame.find(params[:id])
-      @blanks= @game.show_correct_letters
-      @correct= @game.correct_letters ||= []
-      @incorrect= @game.incorrect_letters ||= []
+      @game = HangmanGame.find(params[:id])
+      @blanks = @game.show_correct_letters
+      @correct = @game.correct_letters ||= []
+      @incorrect = @game.incorrect_letters ||= []
       erb :'hangman/index'
     else
       redirect "/hangman/#{@game.id}/lose"
@@ -20,23 +20,23 @@ class HangmanController < ApplicationController
 
   post '/' do
     authenticate!
-    game= HangmanGame.new({user_id: current_user.id})
-    game.word= game.secret_word
+    game = HangmanGame.new({user_id: current_user.id})
+    game.word = game.secret_word
     game.save!
     redirect "/hangman/#{game.id}"
   end
 
   post '/:id/guess' do
     content_type :json
-    game= HangmanGame.find(params[:id])
+    game = HangmanGame.find(params[:id])
     # letter= params[:letter].downcase
-    letter= params[:letterGuess].downcase
-
+    letter = params[:letterGuess].downcase
 
     if game.guess_not_valid?(letter)
-      #send error message
+      { message: 'The eight-ball says, try again later'}.to_json
     else
-      move= HangmanMove.create({letter: letter, user_id: current_user.id, hangman_game_id: game.id})
+      #move = HangmanMove.create({letter: letter, user_id: current_user.id, hangman_game_id: game.id})
+      game.hangman_moves << HangmanMove.new(letter: letter, user_id: current_user.id)
       #send down some new values
       {
         secret_word: game.show_correct_letters,
@@ -50,14 +50,14 @@ class HangmanController < ApplicationController
   end
 
   post '/:id/word' do
-    game= HangmanGame.find(params[:id])
-    answer= params[:word]
+    game = HangmanGame.find(params[:id])
+    answer = params[:word]
     game.guess_entire_word(answer)
     redirect "/hangman/#{game.id}"
   end
 
   get '/:id/win' do
-    @game= HangmanGame.find(params[:id])
+    @game = HangmanGame.find(params[:id])
     erb :'hangman/win'
   end
 

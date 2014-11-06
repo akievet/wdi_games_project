@@ -3,9 +3,9 @@ class HangmanMove < ActiveRecord::Base
   belongs_to :user
 
   def is_correct?
-    word= self.hangman_game.word
+    word = self.hangman_game.word
 
-    word.chars.include? self.letter
+    word.include? self.letter
   end
 
 end
