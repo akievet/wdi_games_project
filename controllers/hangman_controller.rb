@@ -3,18 +3,11 @@ class HangmanController < ApplicationController
   get '/:id' do
     authenticate!
     @game= HangmanGame.find(params[:id])
+    @blanks = @game.show_correct_letters
+    @correct = @game.correct_letters ||= []
+    @incorrect = @game.incorrect_letters ||= []
 
-    if @game.correct?
-      redirect "/hangman/#{@game.id}/win"
-    elsif @game.another_turn?
-      @game = HangmanGame.find(params[:id])
-      @blanks = @game.show_correct_letters
-      @correct = @game.correct_letters ||= []
-      @incorrect = @game.incorrect_letters ||= []
-      erb :'hangman/index'
-    else
-      redirect "/hangman/#{@game.id}/lose"
-    end
+    erb :'hangman/index'
   end
 
 
@@ -31,21 +24,35 @@ class HangmanController < ApplicationController
     game = HangmanGame.find(params[:id])
     letter = params[:letterGuess].downcase
 
+
     if game.guess_not_valid?(letter)
       { message: 'The eight-ball says, try again later'}.to_json
     else
-      #move = HangmanMove.create({letter: letter, user_id: current_user.id, hangman_game_id: game.id})
+
       game.hangman_moves << HangmanMove.new(letter: letter, user_id: current_user.id)
 
-      {
-        secret_word: game.show_correct_letters,
-        correct_letters: game.correct_letters ||= [],
-        incorrect_letters: game.incorrect_letters ||= [],
-        score: game.lives
-      }.to_json
+      if game.correct?
+        {
+         win: true,
+         score: game.lives
+        }.to_json
+
+      elsif game.another_turn?
+        {
+          secret_word: game.show_correct_letters,
+          correct_letters: game.correct_letters ||= [],
+          incorrect_letters: game.incorrect_letters ||= [],
+          score: game.lives
+        }.to_json
+
+      else
+        {
+          lose: true,
+          revealed_word: game.word
+        }.to_json
+      end
+
     end
-
-
   end
 
   post '/:id/word' do
@@ -55,12 +62,27 @@ class HangmanController < ApplicationController
 
     game.guess_entire_word(answer)
 
-    {
-      secret_word: game.show_correct_letters,
-      correct_letters: game.correct_letters ||= [],
-      incorrect_letters: game.incorrect_letters ||= [],
-      score: game.lives
-    }.to_json
+    if game.correct?
+      {
+        win: true,
+        score: game.lives
+      }.to_json
+
+    elsif game.another_turn?
+      {
+        secret_word: game.show_correct_letters,
+        correct_letters: game.correct_letters ||= [],
+        incorrect_letters: game.incorrect_letters ||= [],
+        score: game.lives
+      }.to_json
+
+    else
+      {
+        lose: true,
+        revealed_word: game.word
+      }.to_json
+    end
+
   end
 
   get '/:id/win' do

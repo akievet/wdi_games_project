@@ -26,13 +26,21 @@ function updateHiddenWordDisplay(currentGuessStatus) {
 
 function handleServerResponse(data) {  
 	console.log(data);
-	var correctLetters = data.correct_letters;
-	var incorrectLetters = data.incorrect_letters;
+	if(data.win){
+		var score = data.score;
+		handleWinServerResponse(score);
+	}else if(data.lose){
+		var revealedWord = data.revealed_word;
+		handleLoseServerResponse(revealedWord);
+	}else{
+		var correctLetters = data.correct_letters;
+		var incorrectLetters = data.incorrect_letters;
 
-	updateHiddenWordDisplay(data.secret_word);
-	displayCorrectGuesses(correctLetters);
-	displayIncorrectGuesses(incorrectLetters);
-	$scoreDisplay.text(data.score);
+		updateHiddenWordDisplay(data.secret_word);
+		displayCorrectGuesses(correctLetters);
+		displayIncorrectGuesses(incorrectLetters);
+		$scoreDisplay.text(data.score);
+	};
 }
 
 function displayCorrectGuesses(letterArray){
@@ -54,4 +62,12 @@ function updateLetterList(letters, list) {
 function letterToHTML(letter){
 	$li = $("<li>");
 	return $li.text(letter);
+}
+
+function handleWinServerResponse(score){
+	window.alert("You won! Score: " + score);
+}
+
+function handleLoseServerResponse(word){
+	window.alert("You lose :( Word: " + word);
 }
