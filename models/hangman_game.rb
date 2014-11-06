@@ -75,7 +75,7 @@ class HangmanGame < ActiveRecord::Base
   def guess_entire_word(guess)
     if guess == self.word
       guess.chars.uniq.each do |char|
-        HangmanMove.create({letter: char, user_id: self.user_id, hangman_game_id: self.id})
+        self.hangman_moves << HangmanMove.new({letter: char, user_id: self.user_id, hangman_game_id: self.id})
       end
     end
   end

@@ -29,7 +29,6 @@ class HangmanController < ApplicationController
   post '/:id/guess' do
     content_type :json
     game = HangmanGame.find(params[:id])
-    # letter= params[:letter].downcase
     letter = params[:letterGuess].downcase
 
     if game.guess_not_valid?(letter)
@@ -37,7 +36,7 @@ class HangmanController < ApplicationController
     else
       #move = HangmanMove.create({letter: letter, user_id: current_user.id, hangman_game_id: game.id})
       game.hangman_moves << HangmanMove.new(letter: letter, user_id: current_user.id)
-      #send down some new values
+
       {
         secret_word: game.show_correct_letters,
         correct_letters: game.correct_letters ||= [],
@@ -50,10 +49,18 @@ class HangmanController < ApplicationController
   end
 
   post '/:id/word' do
+    content_type :json
     game = HangmanGame.find(params[:id])
-    answer = params[:word]
+    answer= params[:wordGuess].downcase
+
     game.guess_entire_word(answer)
-    redirect "/hangman/#{game.id}"
+
+    {
+      secret_word: game.show_correct_letters,
+      correct_letters: game.correct_letters ||= [],
+      incorrect_letters: game.incorrect_letters ||= [],
+      score: game.lives
+    }.to_json
   end
 
   get '/:id/win' do
