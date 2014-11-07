@@ -4,9 +4,6 @@ class HangmanController < ApplicationController
     authenticate!
     @game= HangmanGame.find(params[:id])
     @blanks = @game.show_correct_letters
-    @correct = @game.correct_letters ||= []
-    @incorrect = @game.incorrect_letters ||= []
-
     erb :'hangman/index'
   end
 

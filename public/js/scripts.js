@@ -71,3 +71,27 @@ function handleWinServerResponse(score){
 function handleLoseServerResponse(word){
 	window.alert("You lose :( Word: " + word);
 }
+
+
+
+function searchForUser(query){
+	$.ajax({
+		method: 'GET',
+		url: '/ttt/search_users',
+		dataType: 'JSON',
+		data:{query: query},
+		success: function(data){
+			console.log(data);
+			var $usersList = $('ul.user-matches');
+
+			$usersList.empty();
+
+			data.forEach(function(user){
+				var $userNode = $('<li>').text(user.username + ' ('+user.email+')');
+				$usersList.append($userNode);
+			});
+		}
+	});
+}
+
+

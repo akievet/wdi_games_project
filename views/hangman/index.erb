@@ -3,36 +3,22 @@
 <h1 style="letter-spacing: 10px;" id="blanks"><%= @blanks %></h1>
 
 <h4>Correct Guesses</h4>
-<ul id="correct-guesses">
-	<!-- I want to add a new li each time a correct letter is guessed -->
-	<% @correct.each do |letter| %>
-		<li><%= letter %></li>
-	<% end %>
-</ul>
+<ul id="correct-guesses"></ul>
 
 <h4>Incorrect Guesses</h4>
-<ul id="incorrect-guesses">
-<!-- 	I want to add a new li each time an incorrect letter is guessed -->
-	<% @incorrect.each do |letter| %>
-	<li><%= letter %></li>
-	<% end %>
-</ul>
+<ul id="incorrect-guesses"></ul>
 
 <form action="/hangman/<%= @game.id %>/guess" method="post" class="guess-letter">
 	<input type="text" name="letter" placeholder="pick a letter">
-	<!-- When clicked, should submit and evaluate guess -->
 	<input type="submit" value="Submit Guess">
 </form>
 
 
-
 <form action="/hangman/<%= @game.id %>/word" method="post" class="guess-word" >
 	<input type="text" name="word" placeholder="...think you know it?">
-	<!-- When clicked, should submit and evaluate guess -->
 	<input type="submit" value="check">
 </form>
 
-<!-- This should update each time a guess is submitted -->
 <h3 class="live-score">Lives Left: <%= @game.lives %></h3>
 
 
