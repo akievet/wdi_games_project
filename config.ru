@@ -11,3 +11,4 @@ map('/sessions'){ run SessionsController }
 map('/users'){ run UsersController }
 map('/hangman'){ run HangmanController }
 map('/ttt'){ run TttController }
+map('/invites'){ run InvitesController }

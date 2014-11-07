@@ -113,5 +113,51 @@ function searchForUser(query){
 }
 
 
+function getMessages(){
+
+	function handleInvitesData(data){
+		console.log(data);
+		var openInvites = data.open_invites;
+		openInvitesToHTML(openInvites);
+	}
+
+	function openInvitesToHTML(invites){
+		var $invitesList = $('ul.invites');
+		$invitesList.empty();
+		invites.forEach(function(invite){
+			var $inviteNode = $('<li>').text('From: '+invite.sender.username + ' ('+invite.created_at+')\n'+invite.message);
+			var $initiateGameForm = $("<form/>", {
+				action: '/ttt/new',
+				method: 'POST'
+			}).append(
+			$("<input/>",{
+				type: 'hidden',
+				name: 'id',
+				value: invite.id
+			}),
+			$("<input/>", {
+				type: 'submit',
+				value: 'Start Game'
+			})
+			);
+			$inviteNode.append($initiateGameForm);
+			$invitesList.append($inviteNode);
+			return $invitesList;
+		});
+	}
+
+	$.ajax({
+		url: '/invites',
+		method: 'GET',
+		dataType: 'json',
+		success: handleInvitesData
+	});
+
+	setTimeout(function(){
+		getMessages();
+	}, 3000);
+}
+
+
 
 

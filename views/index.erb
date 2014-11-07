@@ -5,3 +5,12 @@
 <form action="/ttt" method="get">
 	<input type="submit" value="Play Tic-Tac-Toe">
 </form>
+
+<% if current_user %>
+<%= erb :'partials/_invites'%>
+<% end %>
+
+
+
+
+
