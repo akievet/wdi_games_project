@@ -1,1 +1,17 @@
-<h5>A game of tic tac toe there shall be...</h5>
+<h3>Invite a User to Play Against</h3>
+<form action="/ttt/invite" method="get">
+	<input type="text" name="search" id="search">
+</form>
+
+<ul class="user-matches">
+	
+</ul>
+
+<script>
+	$(function(){
+		$('input').on('keyup', function(){
+			var userQueryString = $(this).val();
+			searchForUser(userQueryString);
+		})
+	});
+</script>

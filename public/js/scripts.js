@@ -6,7 +6,7 @@ function evaluateLetterGuess(letterGuess){
 		url: '/hangman/' + $id + '/guess',
 		dataType: 'JSON',
 		data: {letterGuess: letterGuess},
-		success: handleServerResponse
+		success: handleServerResponseFromHangmanGame
 	});
 }
 
@@ -16,7 +16,7 @@ function evaluateWordGuess(wordGuess){
 		url: '/hangman/' + $id + '/word',
 		dataType: 'JSON',
 		data: {wordGuess: wordGuess},
-		success: handleServerResponse
+		success: handleServerResponseFromHangmanGame
 	});
 }
 
@@ -24,7 +24,7 @@ function updateHiddenWordDisplay(currentGuessStatus) {
 		$secretWordDisplay.text(currentGuessStatus);
 	}
 
-function handleServerResponse(data) {  
+function handleServerResponseFromHangmanGame(data) {  
 	console.log(data);
 	if(data.win){
 		var score = data.score;
@@ -75,23 +75,43 @@ function handleLoseServerResponse(word){
 
 
 function searchForUser(query){
+	function handleServerResponseFromUserSearch(data){
+		console.log(data);
+
+		var $usersList = $('ul.user-matches');
+		$usersList.empty();
+
+		data.forEach(function(user){
+			var $userNode = $('<li>').text(user.username + ' ('+user.email+')');
+			var $inviteButton = $('<button>').text('Invite to Play');
+			$inviteButton.on("click", function(e){
+				$.ajax({
+					url: '/ttt/invite',
+					method: 'POST',
+					dataType: 'json',
+					data: {id: user.id},
+					success: function(data){
+						console.log(data);
+						window.alert("Your invite has been sent to "+ data.name);
+					}
+				});
+			});
+			$userNode.append($inviteButton);
+			$usersList.append($userNode);
+			return $usersList;
+		});
+	}
+
+
 	$.ajax({
 		method: 'GET',
 		url: '/ttt/search_users',
 		dataType: 'JSON',
 		data:{query: query},
-		success: function(data){
-			console.log(data);
-			var $usersList = $('ul.user-matches');
-
-			$usersList.empty();
-
-			data.forEach(function(user){
-				var $userNode = $('<li>').text(user.username + ' ('+user.email+')');
-				$usersList.append($userNode);
-			});
-		}
+		success: handleServerResponseFromUserSearch
 	});
 }
+
+
 
 
