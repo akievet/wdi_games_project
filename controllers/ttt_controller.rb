@@ -27,8 +27,8 @@ class TttController < ApplicationController
 
   post '/new' do
     invite = Invite.find(params[:id])
-    invite.update({accepted: true})
-    game = TttGame.create({player_1_id: invite.sender_id, player_2_id: invite.recipient_id})
+    invite.update({accepted: true, message: 'Invitation Accepted: Go to game'})
+    game = TttGame.create({player_1_id: invite.sender_id, player_2_id: invite.recipient_id, invite_id: invite.id})
     redirect "/ttt/#{game.id}"
   end
 end

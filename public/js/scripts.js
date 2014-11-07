@@ -118,7 +118,9 @@ function getMessages(){
 	function handleInvitesData(data){
 		console.log(data);
 		var openInvites = data.open_invites;
+		var acceptedInvites = data.accepted_invites;
 		openInvitesToHTML(openInvites);
+		acceptedInvitesToHTML(acceptedInvites);
 	}
 
 	function openInvitesToHTML(invites){
@@ -143,6 +145,19 @@ function getMessages(){
 			$inviteNode.append($initiateGameForm);
 			$invitesList.append($inviteNode);
 			return $invitesList;
+		});
+	}
+
+	function acceptedInvitesToHTML(invites){
+		var $openGameList = $('ul.current-games');
+		$openGameList.empty();
+		invites.forEach(function(invite){
+			var $openGameNode = $('<li>').text('Tic Tac Toe game against ' + invite.sender.username + '. Started on ' + invite.updated_at);
+			var $linkToGame = $('<a>');
+			$linkToGame.text('Play Game');
+			$linkToGame.attr("href", '/ttt/' + invite.ttt_game.id);
+			$openGameNode.append($linkToGame);
+			$openGameList.append($openGameNode);
 		});
 	}
 
