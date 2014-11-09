@@ -152,7 +152,7 @@ function getMessages(){
 		var $openGameList = $('ul.current-games');
 		$openGameList.empty();
 		invites.forEach(function(invite){
-			var $openGameNode = $('<li>').text('Tic Tac Toe game against ' + invite.sender.username + '. Started on ' + invite.updated_at);
+			var $openGameNode = $('<li>').text('Open Tic Tac Toe Game- Challenger: ' + invite.sender.username + ', Against: ' + invite.recipient.username + '. Started on ' + invite.updated_at);
 			var $linkToGame = $('<a>');
 			$linkToGame.text('Play Game');
 			$linkToGame.attr("href", '/ttt/' + invite.ttt_game.id);
@@ -173,6 +173,31 @@ function getMessages(){
 	}, 3000);
 }
 
+function makeMove(spaceId){
+	var $id = $('h1').data('id');
+
+	function handleMoveRequestData(data){
+		console.log(data);
+		var $xOrO = data.xo;
+		var $spaceId = data.space_id;
+		fillInSpace($xOrO, $spaceId);
+	}
+
+	function fillInSpace(xOrO, spaceId){
+		var $spaceDiv = $('div#' + spaceId);
+		$spaceDiv.text(xOrO); 
+	}
+
+	$.ajax({
+		method: 'POST',
+		url: '/ttt/' + $id + '/move',
+		dataType: 'json',
+		data: {
+			spaceId: spaceId 
+		},
+		success: handleMoveRequestData
+	});
+}
 
 
 

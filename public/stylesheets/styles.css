@@ -4,8 +4,10 @@ div.ttt-board{
 	border: 1px solid black;
 	margin: 5px;
 	margin-bottom: 15px;
+	cursor: pointer;
 }
 
 div.ttt-board-row{
 	display:inline-block;
+	vertical-align: top;
 }

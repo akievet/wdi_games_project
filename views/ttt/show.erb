@@ -1,6 +1,7 @@
-<h1>A Unique Multiplayer Game of Tic Tac Toe</h1>
+<h1 data-id="<%= @game.id %>">A Unique Multiplayer Game of Tic Tac Toe</h1>
 <h4>Player 1: <%= @game.player_1.username %></h4>
 <h4>Player 2: <%= @game.player_2.username %></h4>
+<h4 class="current-player">Current Move: <%= @game.current_player.username %></h4>
 
 <div class="ttt-board-row">
 <div class="ttt-board" id="0"></div>
@@ -19,3 +20,14 @@
 <div class="ttt-board" id="7"></div>
 <div class="ttt-board" id="8"></div>
 </div>
+
+
+<script>
+$(function(){
+
+	$('div.ttt-board').on('click', function(e){
+		var $spaceId = this.id
+		makeMove($spaceId);
+	});
+});
+</script>
