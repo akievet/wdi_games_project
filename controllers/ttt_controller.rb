@@ -38,13 +38,25 @@ class TttController < ApplicationController
     game = TttGame.find(params[:id])
     space_id = params[:spaceId]
 
-    TttMove.create({player_id: current_user.id, space_id: space_id, game_id: game.id})
-    game.update({current_player_id: game.change_player})
+    if current_user == game.current_player
+      game.ttt_moves << TttMove.new(player_id: current_user.id, space_id: space_id, ttt_game_id: game.id)
+      game.update({current_player_id: game.change_player})
+      {
+        message: 'Move processed!',
+      }.to_json
+    else
+      {
+        message: 'Wait for your turn!',
+      }.to_json
+    end
+  end
 
-    #send back the new state of the game
+  get '/:id/render_board' do
+    content_type :json
+    game = TttGame.find(params[:id])
     {
-      space_id: space_id,
-      xo: game.xo
+      moves_array: game.moves_array,
+      current_turn: game.current_player
     }.to_json
   end
 end

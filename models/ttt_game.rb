@@ -25,10 +25,21 @@ class TttGame < ActiveRecord::Base
     end
   end
 
+
   def move_valid?
-    # Player must be current player
+
     # Space must be empty
     # Game must still be open
+  end
+
+  def moves_array
+    moves_array = []
+    self.ttt_moves.each do |move|
+      letter = move.letter
+      space = move.space_id
+      moves_array << [ letter, space ]
+    end
+    return moves_array
   end
 
 end

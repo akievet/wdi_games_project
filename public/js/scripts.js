@@ -112,6 +112,7 @@ function searchForUser(query){
 	});
 }
 
+// // // // FOR GETTING MESSAGES ON INDEX PAGE // // // // 
 
 function getMessages(){
 
@@ -173,31 +174,55 @@ function getMessages(){
 	}, 3000);
 }
 
+// // // // FOR TIC TAC TOE SHOW PAGE // // // // 
+
 function makeMove(spaceId){
 	var $id = $('h1').data('id');
-
-	function handleMoveRequestData(data){
-		console.log(data);
-		var $xOrO = data.xo;
-		var $spaceId = data.space_id;
-		fillInSpace($xOrO, $spaceId);
-	}
-
-	function fillInSpace(xOrO, spaceId){
-		var $spaceDiv = $('div#' + spaceId);
-		$spaceDiv.text(xOrO); 
-	}
-
-	$.ajax({
+		$.ajax({
 		method: 'POST',
 		url: '/ttt/' + $id + '/move',
 		dataType: 'json',
 		data: {
 			spaceId: spaceId 
 		},
-		success: handleMoveRequestData
+		success: renderCurrentBoard
 	});
 }
+
+function renderCurrentBoard(){
+	var $id = $('h1').data('id');
+	$.ajax({
+		method: 'GET',
+		url: '/ttt/' + $id + '/render_board',
+		dataType: 'json',
+		success: renderTttBoard
+	});
+
+	function renderTttBoard(data){
+		console.log(data);
+		var $movesArray = data.moves_array;
+		var $whosTurn = data.current_turn.username;
+		updateTttBoard($movesArray);
+		updateWhosTurn($whosTurn);
+	}
+
+	function updateTttBoard(allMoves){
+		allMoves.forEach(function(value){
+			var $letter = value[0]
+			var $space = value[1]
+			$('div#' + $space ).text($letter);
+		});
+	}
+
+	function updateWhosTurn(username){
+		$('h4.current-player').text(username);
+	}
+
+	setTimeout(function(){
+		renderCurrentBoard();
+	}, 1000);
+}
+
 
 
 

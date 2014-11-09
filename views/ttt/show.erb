@@ -25,6 +25,8 @@
 <script>
 $(function(){
 
+	renderCurrentBoard();
+
 	$('div.ttt-board').on('click', function(e){
 		var $spaceId = this.id
 		makeMove($spaceId);
