@@ -25,10 +25,19 @@ class TttGame < ActiveRecord::Base
     end
   end
 
+  def space_free?(space)
+    taken_spaces = self.ttt_moves.map do |move|
+      move.space_id
+    end
+    if taken_spaces.include?(space)
+      false
+    else
+      true
+    end
+  end
 
-  def move_valid?
 
-    # Space must be empty
+  def move_valid?(space)
     # Game must still be open
   end
 

@@ -36,13 +36,13 @@ class TttController < ApplicationController
   post '/:id/move' do
     content_type :json
     game = TttGame.find(params[:id])
-    space_id = params[:spaceId]
+    space_id = params[:spaceId].to_i
 
-    if current_user == game.current_player
+    if (current_user == game.current_player) && game.space_free?(space_id)
       game.ttt_moves << TttMove.new(player_id: current_user.id, space_id: space_id, ttt_game_id: game.id)
       game.update({current_player_id: game.change_player})
       {
-        message: 'Move processed!',
+        message: 'Move successful!',
       }.to_json
     else
       {

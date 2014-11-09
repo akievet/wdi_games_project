@@ -185,7 +185,9 @@ function makeMove(spaceId){
 		data: {
 			spaceId: spaceId 
 		},
-		success: renderCurrentBoard
+		success: function(data){
+			console.log(data);
+		}
 	});
 }
 
