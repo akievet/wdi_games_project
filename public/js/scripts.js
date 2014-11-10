@@ -119,9 +119,36 @@ function getMessages(){
 	function handleInvitesData(data){
 		console.log(data);
 		var openInvites = data.open_invites;
-		var acceptedInvites = data.accepted_invites;
+		var openHMGames = data.open_hm_games;
+		var openTTTGames = data.open_ttt_games;
+
 		openInvitesToHTML(openInvites);
-		acceptedInvitesToHTML(acceptedInvites);
+		openGamesToHTML(openHMGames, openTTTGames);
+	}
+
+	function openGamesToHTML(hmGames, tttGames){
+		var $openHMGameList = $('ul.current-hm-games');
+		var $openTTTGameList = $('ul.current-ttt-games');
+		$openHMGameList.empty();
+		$openTTTGameList.empty();
+
+		hmGames.forEach(function(game){
+			var $openHMGameNode = $('<li>').text('Open Hangman Game. Last Played: ' + game.updated_at + '.');
+			var $linkToHMGame = $('<a>');
+			$linkToHMGame.text('Play Game');
+			$linkToHMGame.attr('href', '/hangman/' + game.id);
+			$openHMGameNode.append($linkToHMGame);
+			$openHMGameList.append($openHMGameNode);
+		});
+
+		tttGames.forEach(function(game){
+			var $openTTTGameNode = $('<li>').text('Open Tic Tac Toe Game. ' + game.player_1.username + ' against ' + game.player_2.username + '. Last Played: ' + game.updated_at + '.');
+			var $linkToTTTGame = $('<a>');
+			$linkToTTTGame.text('Play Game');
+			$linkToTTTGame.attr('href', '/ttt/' + game.id);
+			$openTTTGameNode.append($linkToTTTGame);
+			$openTTTGameList.append($openTTTGameNode);
+		});
 	}
 
 	function openInvitesToHTML(invites){
@@ -149,19 +176,6 @@ function getMessages(){
 		});
 	}
 
-	function acceptedInvitesToHTML(invites){
-		var $openGameList = $('ul.current-games');
-		$openGameList.empty();
-		invites.forEach(function(invite){
-			var $openGameNode = $('<li>').text('Open Tic Tac Toe Game- Challenger: ' + invite.sender.username + ', Against: ' + invite.recipient.username + '. Started on ' + invite.updated_at);
-			var $linkToGame = $('<a>');
-			$linkToGame.text('Play Game');
-			$linkToGame.attr("href", '/ttt/' + invite.ttt_game.id);
-			$openGameNode.append($linkToGame);
-			$openGameList.append($openGameNode);
-		});
-	}
-
 	$.ajax({
 		url: '/invites',
 		method: 'GET',
@@ -177,7 +191,7 @@ function getMessages(){
 // // // // FOR TIC TAC TOE SHOW PAGE // // // // 
 
 function makeMove(spaceId){
-	var $id = $('h1').data('id');
+	var $id = $('h1#game_id').data('id');
 		$.ajax({
 		method: 'POST',
 		url: '/ttt/' + $id + '/move',
@@ -191,22 +205,40 @@ function makeMove(spaceId){
 	});
 }
 
-function renderCurrentBoard(){
-	var $id = $('h1').data('id');
+function getCurrentGameState(){
+	var $id = $('h1#game_id').data('id');
 	$.ajax({
 		method: 'GET',
 		url: '/ttt/' + $id + '/render_board',
 		dataType: 'json',
-		success: renderTttBoard
+		success: renderBoardOrEnd
 	});
 
-	function renderTttBoard(data){
+	function renderBoardOrEnd(data){
 		console.log(data);
 		var $movesArray = data.moves_array;
-		var $whosTurn = data.current_turn.username;
-		updateTttBoard($movesArray);
-		updateWhosTurn($whosTurn);
+		if(data.win){
+			clearTimeout(intervalController);
+			var $winner = data.winner;
+			loadPopupBox($winner);
+			updateTttBoardAtWin($movesArray);
+		}else{
+			var $whosTurn = data.current_turn.username;
+			renderBoard($movesArray, $whosTurn);
+		};
 	}
+
+	var intervalController;
+
+	intervalController = setTimeout(function(){
+		getCurrentGameState();
+	}, 1000);
+	
+}
+
+function renderBoard(allMoves, username){
+	updateTttBoard(allMoves);
+	updateWhosTurn(username);
 
 	function updateTttBoard(allMoves){
 		allMoves.forEach(function(value){
@@ -219,12 +251,69 @@ function renderCurrentBoard(){
 	function updateWhosTurn(username){
 		$('h4.current-player').text(username);
 	}
+}
 
-	setTimeout(function(){
-		renderCurrentBoard();
-	}, 1000);
+function updateTttBoardAtWin(allMoves){
+	allMoves.forEach(function(value){
+		var $letter = value[0]
+		var $space = value[1]
+		$('div#' + $space ).text($letter);
+	});
+}
+
+function loadPopupBox(winner){
+	$('#popup_box').fadeIn("slow");
+	$('#show_page_container').css({
+		"opacity":"0.3"
+	});
+	$('h1.winner').text('Winner: ' + winner.username + '!');
 }
 
 
+function unloadPopupBox(){
+	$('#popup_box').fadeOut("slow");
+	$('#show_page_container').css({
+		'opacity':'1'
+	});
+	redirectToLeaderBoard();
+}
+
+
+function getScores(){
+	var $id = $('h1.user_id').data('id');
+	$.ajax({
+		method: 'GET',
+		url: '/users/' + $id + '/scores',
+		dataType: 'json',
+		success: renderScores
+	});
+
+	function renderScores(data){
+		console.log(data);
+		debugger
+		var $hmGames = data.hangman_games;
+		var $tttGames = data.ttt_games;
+		renderHMScores($hmGames);
+		renderTTTScores($tttGames);
+
+		function renderHMScores(games){
+			$hmScoresList = $('ul.hm');
+			$hmScoresList.empty();
+			games.forEach(function(game){
+				var $hmScoreNode = $('<li>').text('Score: '+ game.lives + ' ('+ game.updated_at + ').');
+				$hmScoresList.append($hmScoreNode);
+			});
+		}
+
+		function renderTTTScores(games){
+			$tttScoresList = $('ul.ttt');
+			$tttScoresList.empty();
+			games.forEach(function(game){
+				var $tttScoreNode = $('<li>').text('Winner: '+ game.winner.username + ', Loser: ' + game.loser.username + ' (' + game.updated_at + ').');
+				$tttScoresList.append($tttScoreNode);
+			});
+		}
+	}
+}
 
 

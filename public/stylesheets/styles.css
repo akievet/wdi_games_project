@@ -11,3 +11,26 @@ div.ttt-board-row{
 	display:inline-block;
 	vertical-align: top;
 }
+
+#popup_box{
+	display: none;
+	position: fixed;
+	_position: absolute;
+	height: 300px;
+	width: 600px;
+	background: #FFFFFF;
+	left: 300px;
+	top: 150px;
+	z-index: 100px;
+	margin-left: 15px;
+
+	border: 2px solid #ff0000;
+	padding: 15px;
+}
+
+#popupBoxClose{
+	right: 5px;
+	top: 5px;
+	position: absolute;
+	color: #6fa5e2;
+}

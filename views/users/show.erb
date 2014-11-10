@@ -1,0 +1,16 @@
+<h1 class="user_id" data-id="<%= @user.id %>"><%= @user.username %></h1>
+<div class="six columns">
+	<h3>Hangman Games: </h3>
+	<ul class="hm"></ul>
+</div>
+
+<div class="six columns offset-by-one">
+	<h3>Tic Tac Toe Games: </h3>
+	<ul class="ttt"></ul>
+</div>
+
+<script>
+$(function(){
+	getScores();
+});
+</script>

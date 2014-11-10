@@ -21,7 +21,7 @@ class TttController < ApplicationController
 
   get '/:id' do
     @game= TttGame.find(params[:id])
-
+    @user= current_user.id
     erb :'ttt/show'
   end
 
@@ -39,7 +39,7 @@ class TttController < ApplicationController
     space_id = params[:spaceId].to_i
 
     if (current_user == game.current_player) && game.space_free?(space_id)
-      game.ttt_moves << TttMove.new(player_id: current_user.id, space_id: space_id, ttt_game_id: game.id)
+      game.ttt_moves << TttMove.new(user_id: current_user.id, space_id: space_id, ttt_game_id: game.id)
       game.update({current_player_id: game.change_player})
       {
         message: 'Move successful!',
@@ -54,9 +54,17 @@ class TttController < ApplicationController
   get '/:id/render_board' do
     content_type :json
     game = TttGame.find(params[:id])
-    {
-      moves_array: game.moves_array,
-      current_turn: game.current_player
-    }.to_json
+    if game.winner
+      {
+        win: true,
+        winner: game.winner,
+        moves_array: game.moves_array
+      }.to_json
+    else
+      {
+        moves_array: game.moves_array,
+        current_turn: game.current_player
+      }.to_json
+    end
   end
 end

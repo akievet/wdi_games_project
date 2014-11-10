@@ -1,35 +1,48 @@
-<h1 data-id="<%= @game.id %>">A Unique Multiplayer Game of Tic Tac Toe</h1>
-<h4>Player 1: <%= @game.player_1.username %></h4>
-<h4>Player 2: <%= @game.player_2.username %></h4>
-<h4 class="current-player">Current Move: <%= @game.current_player.username %></h4>
-
-<div class="ttt-board-row">
-<div class="ttt-board" id="0"></div>
-<div class="ttt-board" id="1"></div>
-<div class="ttt-board" id="2"></div>
+<div id= "popup_box">
+	<h1 class="winner"></h1>
+	<a id="popupBoxClose">Close</a>
 </div>
+<div id="show_page_container">
+	<h1 id="game_id" data-id="<%= @game.id %>" data-user="<%= @user %>">A Unique Multiplayer Game of Tic Tac Toe</h1>
+	<h4>Player 1: <%= @game.player_1.username %></h4>
+	<h4>Player 2: <%= @game.player_2.username %></h4>
+	<h4 class="current-player">Current Move: <%= @game.current_player.username %></h4>
 
-<div class="ttt-board-row">
-<div class="ttt-board" id="3"></div>
-<div class="ttt-board" id="4"></div>
-<div class="ttt-board" id="5"></div>
+	<div class="ttt-board-row">
+		<div class="ttt-board" id="0"></div>
+		<div class="ttt-board" id="1"></div>
+		<div class="ttt-board" id="2"></div>
+	</div>
+
+	<div class="ttt-board-row">
+		<div class="ttt-board" id="3"></div>
+		<div class="ttt-board" id="4"></div>
+		<div class="ttt-board" id="5"></div>
+	</div>
+
+	<div class="ttt-board-row">
+		<div class="ttt-board" id="6"></div>
+		<div class="ttt-board" id="7"></div>
+		<div class="ttt-board" id="8"></div>
+	</div>
 </div>
-
-<div class="ttt-board-row">
-<div class="ttt-board" id="6"></div>
-<div class="ttt-board" id="7"></div>
-<div class="ttt-board" id="8"></div>
-</div>
-
 
 <script>
 $(function(){
 
-	renderCurrentBoard();
+	getCurrentGameState();
 
 	$('div.ttt-board').on('click', function(e){
 		var $spaceId = this.id
 		makeMove($spaceId);
+	});
+
+	$('#popupBoxClose').click(function(){
+		unloadPopupBox();
+	});
+
+	$('#show_page_container').click(function(){
+		unloadPopupBox();
 	});
 });
 </script>

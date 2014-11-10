@@ -1,6 +1,7 @@
 <nav class="nav-down sixteen columns">
 	<ul class="navbar">
 		<li><a href="/">Home</a></li>
+		<li><a href="/users/<%= current_user.id %>">Profile</li></a>
 		<li class="logout">
 			<form action="/sessions" method="post">
 				<input type="hidden" name="_method" value="delete">

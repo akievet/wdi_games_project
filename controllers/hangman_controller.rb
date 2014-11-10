@@ -82,14 +82,5 @@ class HangmanController < ApplicationController
 
   end
 
-  get '/:id/win' do
-    @game = HangmanGame.find(params[:id])
-    erb :'hangman/win'
-  end
-
-  get '/:id/lose' do
-    erb :'hangman/lose'
-  end
-
 
 end
